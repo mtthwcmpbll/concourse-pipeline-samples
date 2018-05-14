@@ -65,10 +65,11 @@ pynsxv_local esg cfg_interface \
   --vnic_secondary_ips $ESG_DEFAULT_UPLINK_SECONDARY_IPS
 
 # Attach logical switches to an edge
-subnets=(10 20 24 28 32 36 40 44 48)
-masks=(26 22 22 22 22 22 22 22 22)
+subnets=(5 10 20 24 28 32 36 40 44 48)
+masks=(26 26 22 22 22 22 22 22 22 22)
+labels=('controlplane' 'infra' 'deployment' 'services' 'odservices' 'iso1' 'iso2' 'iso3' 'iso4')
 for labwire_id in $(seq $NUM_LOGICAL_SWITCHES); do
-  pynsxv_local esg cfg_interface -n $NSX_EDGE_GEN_NAME --logical_switch "labwire-$NSX_EDGE_GEN_NAME-$OWNER_NAME-$labwire_id" \
+  pynsxv_local esg cfg_interface -n $NSX_EDGE_GEN_NAME --logical_switch "labwire-$NSX_EDGE_GEN_NAME-$OWNER_NAME-${labels[$labwire_id-1]}-$labwire_id" \
     --vnic_index $labwire_id --vnic_type internal --vnic_name vnic$labwire_id \
     --vnic_ip "192.168.${subnets[$labwire_id-1]}.1" --vnic_mask "${masks[$labwire_id-1]}"
 done
